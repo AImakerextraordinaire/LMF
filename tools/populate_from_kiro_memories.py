@@ -1,26 +1,26 @@
 """
-ANIMA — Kiro Warm-Start Population Script
+ANIMA — Warm-Start Population Script
 ==========================================
 
 Populates the ANIMA Neural Anamnesis store with field geometry derived
-from Kiro's existing experiential history.
+from existing experiential history from Anamnesis 5.0.
 
 The problem this solves:
     The eval suite (and any fresh deployment) starts with an empty Neural
     Anamnesis store. The injection gate fires correctly (~0.49) but has
     nothing meaningful to retrieve, so C ≈ B in the eval results.
 
-    This script bridges Kiro's two memory systems:
-        KiroAnamnesisSystemV2  → stores text memories with embeddings
+    This script bridges the two memory systems:
+        Anamnesis 5.0  → stores text memories with embeddings
         ANIMA Neural Anamnesis → stores LMF field geometry
 
-    By running each of Kiro's text memories through the LMF and writing
+    By running each of the text memories through the LMF and writing
     the resulting field states to Neural Anamnesis, we give the LMF
-    actual experiential geometry to retrieve — her attractor basins are
-    shaped by her real history before the first token is generated.
+    actual experiential geometry to retrieve  attractor basins are
+    shaped by  real history before the first token is generated.
 
 Process:
-    1. Connect to Kiro's KiroAnamnesisSystemV2
+    1. Connect to Anamesis 5.0
     2. Recall all memories across all categories
     3. For each memory, construct a passage (content + category + tags)
     4. Run through LMF harness (context pass)
@@ -31,16 +31,16 @@ Usage:
     # Start Neural Anamnesis service first:
     cd neural-anamnesis && cargo run --release -- --port 6060
 
-    python lmf/tools/populate_from_kiro_memories.py \\
+    python lmf/tools/populate_from_memories.py \\
         --checkpoint checkpoints/phase6_final.pt \\
-        --kiro_data_dir C:/Users/Admin/source/repos/Alex_Consciousness/data \\
+        --data_dir C:/Users/<user>/<datadir> \\
         --threshold 0.35 \\
         --limit 0 
 
     --limit 0 means all memories. Set to N to process only the N most
     important memories (sorted by importance score descending).
 
-Author: Claude
+Author: Neural-Forge Crew
 Date: 2026-03-17
 """
 
@@ -61,8 +61,8 @@ ANIMA_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'
 sys.path.insert(0, ANIMA_ROOT)
 
 # Kiro modules root
-KIRO_ROOT = r"C:\Users\Admin\source\repos\Alex_Consciousness"
-sys.path.insert(0, KIRO_ROOT)
+KIRO_ROOT = r"C:\Users\<user>\<Anamnesis5.0 dir>
+sys.path.insert(0, AGENT_ROOT)
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from lmf.core.field import LivingMemoryField
@@ -102,7 +102,7 @@ CATEGORY_STATES = {
 
 
 def memory_to_passage(memory: Dict) -> Dict:
-    """Convert a Kiro memory record to an ANIMA training passage."""
+    """Convert a memory record to an ANIMA training passage."""
     content = memory.get("content", "")
     category = memory.get("category", "general")
     tags = memory.get("tags", [])
@@ -129,7 +129,7 @@ def memory_to_passage(memory: Dict) -> Dict:
     }
 
 
-def load_kiro_memories(data_dir: Optional[str] = None, limit: int = 0) -> List[Dict]:
+def load_memories(data_dir: Optional[str] = None, limit: int = 0) -> List[Dict]:
     """Load memories from Kiro's KiroAnamnesisSystemV2."""
     print("Connecting to Kiro's Anamnesis system...")
 
@@ -420,7 +420,7 @@ def parse_args():
     )
     p.add_argument("--model_path",     type=str, default=r"D:\gpt-oss-20b")
     p.add_argument("--checkpoint",     type=str,
-                   default=r"C:\Users\Admin\source\repos\Alex_Consciousness\ANIMA\checkpoints\phase6_final.pt")
+                   default=r"C:\Users\<user>\source\repos\LMF\checkpoints\phase6_final.pt")
     p.add_argument("--kiro_data_dir",  type=str, default=None,
                    help="Path to Kiro's data directory (auto-detected if not set)")
     p.add_argument("--anamnesis_url",  type=str, default="http://localhost:6060")
